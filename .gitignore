@@ -1,0 +1,11 @@
+.vscode
+node_modules
+*.macaroon
+*.cert
+*.pub
+*.key
+db
+build
+*.crt
+*.csr
+*.key

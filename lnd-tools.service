@@ -1,0 +1,12 @@
+[Unit]
+Description=LND Tools
+After=network.target lnd.service
+
+
+[Service]
+ExecStart=/opt/lnd-tools serve
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
