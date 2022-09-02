@@ -9,7 +9,12 @@
 For these instructions, I will use the dev command (i.e. `lnd-tools.js`), but if using a
 binary, you should replace `lnd-tools` with your appropriate binary file.
 
-First, you'll need to create an authentication private/public key pair.
+First, you'll need to generate a TLS cert
+```
+./tls.sh
+```
+
+To run your server, you'll need to create an authentication private/public key pair.
 ```
 ./lnd-tools.js keygen
 ```
