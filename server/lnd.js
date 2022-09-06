@@ -1,11 +1,14 @@
 const lightning = require('lightning');
 const fs = require('fs');
+const config = require('./config');
 const constants = require('../lib/constants');
 const db = require('./db');
 const logger = require('../lib/logger');
 
 class Lnd {
-  constructor({ host, port, macaroon, cert }) {
+  constructor() {
+    let macaroon = config.macaroon;
+    let cert = config.cert;
     if (fs.existsSync(macaroon)) {
       macaroon = fs.readFileSync(macaroon).toString('base64');
     }
@@ -13,9 +16,9 @@ class Lnd {
       cert = fs.readFileSync(cert).toString('base64');
     }
     const { lnd } = lightning.authenticatedLndGrpc({
-      socket: `${host}:${port}`,
-      macaroon,
-      cert
+      socket: config.lndrpc,
+      macaroon: macaroon,
+      cert: cert
     });
     this.lnd = lnd;
     this.subs = {};

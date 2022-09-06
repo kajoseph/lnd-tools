@@ -2,11 +2,11 @@ const express = require('express');
 const cors = require('cors');
 const https = require('https');
 const fs = require('fs');
-const Path = require('path');
 const auth = require('./middleware/auth');
+const config = require('../config');
 const logger = require('../../lib/logger');
 
-module.exports = ({ port, origins, key, datadir }) => {
+module.exports = () => {
   const app = express();
 
   // CORS
@@ -18,30 +18,27 @@ module.exports = ({ port, origins, key, datadir }) => {
     next();
   });
   app.use(cors({
-    origin: origins
+    origin: config.corsOrigins
   }));
 
   // JSON body parse
   app.use(express.json());
 
   // Routes
-  app.use('/channel', auth(key), require('./routes/channel'));
+  app.use('/channel', auth(config.authkey), require('./routes/channel'));
 
-
-  const keyFile = Path.join(datadir, 'lnd-tools.key');
-  const certFile = Path.join(datadir, 'lnd-tools.crt');
-  if (!fs.existsSync(keyFile) || !fs.existsSync(certFile)) {
+  if (!fs.existsSync(config.lndkey) || !fs.existsSync(config.lndcert)) {
     logger.log('No TLS certs found. Try running tls.sh to generate one', ['API']);
     process.exit(1);
   }
 
   // Listening
   const server = https.createServer({
-    key: fs.readFileSync(keyFile, 'utf8'),
-    cert: fs.readFileSync(certFile, 'utf8')
+    key: fs.readFileSync(config.lndkey, 'utf8'),
+    cert: fs.readFileSync(config.lndcert, 'utf8')
   }, app);
-  server.listen(port, function() {
-    logger.log('Listening on HTTPS port ' + port, ['API']);
+  server.listen(config.port, function() {
+    logger.log('Listening on HTTPS port ' + config.port, ['API']);
   });
   return server;
 };

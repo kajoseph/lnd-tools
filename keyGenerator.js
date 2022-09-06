@@ -3,13 +3,15 @@
 const crypto = require('crypto');
 const secp = require('secp256k1');
 const fs = require('fs');
+const Path = require('path');
+const os = require('os');
 
 class KeyGenerator {
   constructor({ pubKey } = {}) {
     this.pubKey = Buffer.from(pubKey, 'hex');
   }
 
-  generate({ out }) {
+  generate({ print, datadir }) {
     const hash = crypto.createHash('sha256').update(Buffer.from('This key is valid')).digest();
 
     let privateKey;
@@ -26,19 +28,30 @@ class KeyGenerator {
 
     if (!valid) {
       console.log('Key generated an invalid signature, please try again');
-    } else if (out) {
-      if (fs.existsSync(out)) {
-        console.log('Replacing existing keys');
-      }
-      fs.writeFileSync(out + '.key', Buffer.from(privateKey).toString('hex'));
-      fs.writeFileSync(out + '.pub', Buffer.from(publicKey).toString('hex'));
-    } else {
+    } else if (print) {
       console.log('Key generated:');
       console.log('---------------');
       console.log('Private Key', Buffer.from(privateKey).toString('hex'));
       console.log('---------------');
       console.log('Public Key', Buffer.from(publicKey).toString('hex'));
       console.log('---------------');
+    } else {
+      const filename = 'auth';
+      datadir = datadir || process.env.LND_TOOLS_DATADIR || Path.join(os.homedir(), '.lnd-tools');
+      if (!fs.existsSync(datadir)) {
+        console.log('Creating new directory: ' + datadir);
+        fs.mkdirSync(datadir, { recursive: true });
+      }
+      const keyFile = Path.join(datadir, filename + '.key');
+      const pubFile = Path.join(datadir, filename + '.pub');
+      if (fs.existsSync(keyFile) || fs.existsSync(pubFile)) {
+        console.log('Replacing existing keys in ' + datadir);
+      }
+      fs.writeFileSync(keyFile, Buffer.from(privateKey).toString('hex'));
+      fs.writeFileSync(pubFile, Buffer.from(publicKey).toString('hex'));
+      console.log('Created:');
+      console.log(' ' + keyFile);
+      console.log(' ' + pubFile);
     }
     process.exit();
   }
