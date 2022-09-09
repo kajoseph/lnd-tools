@@ -4,8 +4,8 @@ const lightning = require('lightning');
 const EventEmitter = require('events');
 const { CryptoRpc } = require('crypto-rpc');
 const Lnd = require('../../server/lnd');
-const logger = require('../../lib/logger');
-const constants = require('../../lib/constants');
+const logger = require('../../server/logger');
+const constants = require('../../server/constants');
 const db = require('../../server/db');
 const iUtils = require('./integrationUtils');
 

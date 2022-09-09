@@ -3,7 +3,7 @@ const fs = require('fs');
 const os = require('os');
 const readline = require('readline');
 const KeyGenerator = require('../keyGenerator');
-const logger = require('../lib/logger');
+const logger = require('./logger');
 
 class Config {
   async load({

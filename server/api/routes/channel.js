@@ -1,8 +1,8 @@
 const express = require('express');
 const validatePubKey = require('../middleware/validatePubKey');
 const db = require('../../db');
-const constants = require('../../../lib/constants');
-const logger = require('../../../lib/logger');
+const constants = require('../../constants');
+const logger = require('../../logger');
 const config = require('../../config');
 
 const app = express();

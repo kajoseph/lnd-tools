@@ -3,7 +3,7 @@ const cors = require('cors');
 const https = require('https');
 const auth = require('./middleware/auth');
 const config = require('../config');
-const logger = require('../../lib/logger');
+const logger = require('../logger');
 
 module.exports = () => {
   const app = express();

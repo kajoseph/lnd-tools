@@ -1,5 +1,5 @@
 const KeyGenerator = require('../../../keyGenerator');
-const logger = require('../../../lib/logger');
+const logger = require('../../logger');
 
 module.exports = function(key) {
   if (typeof key === 'string') {

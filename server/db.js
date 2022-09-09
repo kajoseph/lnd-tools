@@ -1,7 +1,7 @@
 const { Level } = require('level');
 const { EntryStream } = require('level-read-stream');
 const Path = require('path');
-const logger = require('../lib/logger');
+const logger = require('./logger');
 
 class Database {
   constructor() {

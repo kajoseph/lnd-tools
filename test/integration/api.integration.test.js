@@ -8,8 +8,8 @@ const secp = require('secp256k1');
 const Api = require('../../server/api');
 const iUtils = require('./integrationUtils');
 const db = require('../../server/db');
-const constants = require('../../lib/constants');
-const logger = require('../../lib/logger');
+const constants = require('../../server/constants');
+const logger = require('../../server/logger');
 const config = require('../../server/config');
 
 describe('API', () => {

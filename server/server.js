@@ -1,12 +1,11 @@
 const { program } = require('commander');
 const os = require('os');
 const Path = require('path');
-const fs = require('fs');
 const db = require('./db');
 const api = require('./api');
 const LND = require('./lnd');
 const Config = require('./config');
-const logger = require('../lib/logger');
+const logger = require('./logger');
 
 program
   .description('Start the web server and LND interceptors')

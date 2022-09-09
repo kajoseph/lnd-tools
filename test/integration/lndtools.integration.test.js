@@ -6,7 +6,7 @@ const fs = require('fs');
 const lndTools = require('../../lnd-tools');
 const server = require('../../server/server');
 const client = require('../../client/client');
-const logger = require('../../lib/logger');
+const logger = require('../../server/logger');
 
 describe.skip('Lnd-Tools', () => {
   beforeEach(() => {

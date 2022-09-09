@@ -1,9 +1,9 @@
 const lightning = require('lightning');
 const fs = require('fs');
 const config = require('./config');
-const constants = require('../lib/constants');
+const constants = require('./constants');
 const db = require('./db');
-const logger = require('../lib/logger');
+const logger = require('./logger');
 
 class Lnd {
   constructor({ lndrpc, lndmacaroon, lndcert } = {}) {
