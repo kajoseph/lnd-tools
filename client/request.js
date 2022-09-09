@@ -41,9 +41,7 @@ class ClientRequest {
         headers: {
           'x-auth': this._buildXAuth({ method, path, body })
         },
-        // pfx: fs.readFileSync(__dirname + '/../lnd-tools.pfx', 'utf8'),
-        // key: fs.readFileSync(__dirname + '/../lnd-tools.key', 'utf8'),
-        // cert: fs.readFileSync(__dirname + './lnd-tools.crt', 'utf8')
+        ecdhCurve: this.cert.length > 1000 ? undefined : 'secp256k1',
         cert: this.cert,
         rejectUnauthorized: process.env.NODE_TLS_REJECT_UNAUTHORIZED || false
       });

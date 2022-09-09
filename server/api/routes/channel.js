@@ -3,6 +3,7 @@ const validatePubKey = require('../middleware/validatePubKey');
 const db = require('../../db');
 const constants = require('../../../lib/constants');
 const logger = require('../../../lib/logger');
+const config = require('../../config');
 
 const app = express();
 
@@ -82,7 +83,7 @@ app.delete('/whitelist/:pubKey', validatePubKey, async (req, res) => {
 app.get('/rejectMessage', async (req, res) => {
   try {
     const msg = await db.collections.CONFIG.get(constants.LND.ChannelRejectMessageKey);
-    return res.send(msg || constants.LND.ChannelRejectMessage);
+    return res.send(msg || config.rejectchannelmessage || constants.LND.ChannelRejectMessage);
   } catch (err) {
     logger.error('Error retreiving rejectMessage', err, ['API']);
     return res.status(500).send(err.message);

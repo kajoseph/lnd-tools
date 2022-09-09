@@ -6,9 +6,10 @@ const db = require('./db');
 const logger = require('../lib/logger');
 
 class Lnd {
-  constructor() {
-    let macaroon = config.macaroon;
-    let cert = config.cert;
+  constructor({ lndrpc, lndmacaroon, lndcert } = {}) {
+    let socket = lndrpc || config.lndrpc;
+    let macaroon = lndmacaroon || config.lndmacaroon;
+    let cert = lndcert || config.lndcert;
     if (fs.existsSync(macaroon)) {
       macaroon = fs.readFileSync(macaroon).toString('base64');
     }
@@ -16,9 +17,9 @@ class Lnd {
       cert = fs.readFileSync(cert).toString('base64');
     }
     const { lnd } = lightning.authenticatedLndGrpc({
-      socket: config.lndrpc,
-      macaroon: macaroon,
-      cert: cert
+      socket,
+      macaroon,
+      cert
     });
     this.lnd = lnd;
     this.subs = {};
@@ -47,7 +48,7 @@ class Lnd {
         if (!dbEntry || !dbEntry.allowed) {
           const chnlMsg = await db.collections.CONFIG.get(constants.LND.ChannelRejectMessageKey);
           logger.log('Rejecting channel request from ' + channel.partner_public_key, ['LND']);
-          return channel.reject({ reason: chnlMsg || constants.LND.ChannelRejectMessage });
+          return channel.reject({ reason: chnlMsg || config.rejectchannelmessage || constants.LND.ChannelRejectMessage });
         }
         logger.log('Accepting channel request from ' + channel.partner_public_key, ['LND']);
         return channel.accept();

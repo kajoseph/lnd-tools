@@ -30,4 +30,11 @@ program.command('keygen')
   .option('-p, --print', 'Prints keys to stdout in plaintext instead of writing to files')
   .action(new KeyGenerator({ pubKey: '' }).generate);
 
-program.parse(process.argv);
+
+if (process.env.MOCHA) {
+  module.exports = {
+    program
+  };
+} else {
+  program.parse(process.argv);
+}

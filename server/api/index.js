@@ -1,7 +1,6 @@
 const express = require('express');
 const cors = require('cors');
 const https = require('https');
-const fs = require('fs');
 const auth = require('./middleware/auth');
 const config = require('../config');
 const logger = require('../../lib/logger');
@@ -27,16 +26,23 @@ module.exports = () => {
   // Routes
   app.use('/channel', auth(config.authkey), require('./routes/channel'));
 
-  if (!fs.existsSync(config.lndkey) || !fs.existsSync(config.lndcert)) {
-    logger.log('No TLS certs found. Try running tls.sh to generate one', ['API']);
+  // TLS config
+  if (!config.lndkey) {
+    logger.error('No TLS cert key found.', null, ['API']);
+    process.exit(1);
+  }
+  if (!config.lndcert) {
+    logger.error('No TLS cert found.', null, ['API']);
     process.exit(1);
   }
 
-  // Listening
   const server = https.createServer({
-    key: fs.readFileSync(config.lndkey, 'utf8'),
-    cert: fs.readFileSync(config.lndcert, 'utf8')
+    ecdhCurve: config.apicertkey.length > 2000 ? undefined : 'secp256k1',
+    key: Buffer.from(config.apicertkey, 'base64'),
+    cert: Buffer.from(config.apicert, 'base64')
   }, app);
+
+  // Listen
   server.listen(config.port, function() {
     logger.log('Listening on HTTPS port ' + config.port, ['API']);
   });

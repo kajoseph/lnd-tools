@@ -25,13 +25,17 @@
     "build": "./build.sh",
     "compile": "pkg .",
     "test": "test",
-    "test:integration": "cd test/integration && ./testRunner.js"
+    "test:unit": "mocha test/unit/**/*.unit.test.js",
+    "ci:test:unit": "npm run test:unit",
+    "test:integration": "cd test/integration && ./testRunner.js",
+    "ci:test:integration": "npm run test:integration"
   },
   "pkg": {
     "assets": [
       "node_modules/classic-level/prebuilds/**/*",
       "server/**/*.js",
       "client/**/*.js",
+      "lib/**/*.js",
       "*.js",
       "node_modules/**/*"
     ],

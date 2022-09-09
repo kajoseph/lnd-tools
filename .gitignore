@@ -9,3 +9,9 @@ build
 *.crt
 *.csr
 *.key
+test/integration/data/temp
+
+# exceptions
+!test/integration/data/**/*.crt
+!test/integration/data/**/*.cert
+!test/integration/data/**/*.key

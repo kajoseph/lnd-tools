@@ -117,4 +117,10 @@ config
   });
 
 
-program.parse(process.argv);
+if (process.env.MOCHA) {
+  module.exports = {
+    program
+  };
+} else {
+  program.parse(process.argv);
+}

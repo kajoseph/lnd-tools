@@ -18,14 +18,22 @@ csrFile=lnd-tools.csr
 # echo sudo update-ca-certificates
 # echo
 
-echo Generating key
-openssl genrsa -out $keyFile 2048;
+if [ $1 == "secp256k1" ]; then
+  echo Generating secp256k1 key
+  openssl ecparam -genkey -name secp256k1 -out $keyFile;
+else
+  echo Generating RSA 2048 key
+  openssl genrsa -out $keyFile 2048;
+fi
+
 echo Generating CSR
 openssl req -new -sha256 -key $keyFile -out $csrFile;
 echo Generating cert
 openssl x509 -req -in $csrFile -signkey $keyFile -out $certFile;
 
 echo Cert created: $certFile
+
+rm $csrFile
 
 # openssl pkcs12 -export -in $certFile -inkey $keyFile \
 #       -certfile $HOME/.bp/ssl/MyCA.pem -out lnd-tools.pfx
