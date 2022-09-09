@@ -10,10 +10,12 @@ const iUtils = require('./integrationUtils');
 const db = require('../../server/db');
 const constants = require('../../lib/constants');
 const logger = require('../../lib/logger');
+const config = require('../../server/config');
 
 describe('API', () => {
-  const privKey = '120bb00b9504168ccb9d851b3330ee15a9356cbd9f755d8fb7f89ee6aa1b58a8';
-  const pubKey = '02edcdccc5c7ee8785dc762831386918049af30bf9750794866187c28fcda0325f';
+  const privKey = process.env.API_PRIVKEY;
+  const pubKey = process.env.API_PUBKEY;
+  const cert = Buffer.from(config.lndcert, 'base64').toString('utf8');
   let apiServer;
 
   function getAuthHeader({ method, path, body }) {
@@ -31,12 +33,7 @@ describe('API', () => {
 
   before(async () => {
     await iUtils.initDB();
-    apiServer = Api({
-      port: 1234,
-      origins: ['localhost'],
-      key: pubKey,
-      datadir: process.env.LND_TOOLS_DATADIR
-    });
+    apiServer = Api();
   });
 
   beforeEach(() => {
@@ -69,7 +66,6 @@ describe('API', () => {
       const response = await supertest(apiServer)
         .get('/channel/whitelist')
         .set('x-auth', 'this is some junky text')
-        .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
         .trustLocalhost(true)
         .send();
 
@@ -106,7 +102,6 @@ describe('API', () => {
           const response = await supertest(apiServer)
             .get('/channel/whitelist')
             .set('x-auth', getAuthHeader({ method: 'GET', path: '/channel/whitelist' }))
-            .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
             .trustLocalhost(true)
             .send();
 
@@ -120,7 +115,6 @@ describe('API', () => {
           const response = await supertest(apiServer)
             .get('/channel/whitelist')
             .set('x-auth', getAuthHeader({ method: 'GET', path: '/channel/whitelist' }))
-            .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
             .trustLocalhost(true)
             .send();
 
@@ -137,7 +131,6 @@ describe('API', () => {
           const response = await supertest(apiServer)
             .get('/channel/whitelist')
             .set('x-auth', getAuthHeader({ method: 'GET', path: '/channel/whitelist' }))
-            .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
             .trustLocalhost(true)
             .send();
 
@@ -154,7 +147,6 @@ describe('API', () => {
           const response = await supertest(apiServer)
             .get('/channel/whitelist?limit=2')
             .set('x-auth', getAuthHeader({ method: 'GET', path: '/channel/whitelist?limit=2' }))
-            .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
             .trustLocalhost(true)
             .send();
 
@@ -170,7 +162,6 @@ describe('API', () => {
           const response = await supertest(apiServer)
             .post(`/channel/whitelist/${pubKey}`)
             .set('x-auth', getAuthHeader({ method: 'POST', path: `/channel/whitelist/${pubKey}` }))
-            .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
             .trustLocalhost(true)
             .send();
 
@@ -185,7 +176,6 @@ describe('API', () => {
           const response = await supertest(apiServer)
             .post(`/channel/whitelist/${pubKey}`)
             .set('x-auth', getAuthHeader({ method: 'POST', path: `/channel/whitelist/${pubKey}` }))
-            .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
             .trustLocalhost(true)
             .send();
 
@@ -202,7 +192,6 @@ describe('API', () => {
           const response = await supertest(apiServer)
             .post(`/channel/whitelist/${pubKey}`)
             .set('x-auth', getAuthHeader({ method: 'POST', path: `/channel/whitelist/${pubKey}` }))
-            .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
             .trustLocalhost(true)
             .send();
 
@@ -217,7 +206,6 @@ describe('API', () => {
           const response = await supertest(apiServer)
             .post(`/channel/whitelist/${pubKey}`)
             .set('x-auth', getAuthHeader({ method: 'POST', path: `/channel/whitelist/${pubKey}` }))
-            .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
             .trustLocalhost(true)
             .send();
 
@@ -237,7 +225,6 @@ describe('API', () => {
           const response = await supertest(apiServer)
             .delete(`/channel/whitelist/${pubKey}`)
             .set('x-auth', getAuthHeader({ method: 'DELETE', path: `/channel/whitelist/${pubKey}` }))
-            .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
             .trustLocalhost(true)
             .send();
 
@@ -253,7 +240,6 @@ describe('API', () => {
           const response = await supertest(apiServer)
             .delete(`/channel/whitelist/${pubKey}`)
             .set('x-auth', getAuthHeader({ method: 'DELETE', path: `/channel/whitelist/${pubKey}` }))
-            .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
             .trustLocalhost(true)
             .send();
 
@@ -271,7 +257,6 @@ describe('API', () => {
           const response = await supertest(apiServer)
             .delete(`/channel/whitelist/${pubKey}`)
             .set('x-auth', getAuthHeader({ method: 'DELETE', path: `/channel/whitelist/${pubKey}` }))
-            .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
             .trustLocalhost(true)
             .send();
 
@@ -290,7 +275,6 @@ describe('API', () => {
           const response = await supertest(apiServer)
             .delete(`/channel/whitelist/${pubKey}`)
             .set('x-auth', getAuthHeader({ method: 'DELETE', path: `/channel/whitelist/${pubKey}` }))
-            .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
             .trustLocalhost(true)
             .send();
 
@@ -319,7 +303,6 @@ describe('API', () => {
           const response = await supertest(apiServer)
             .get('/channel/rejectmessage')
             .set('x-auth', getAuthHeader({ method: 'GET', path: '/channel/rejectmessage' }))
-            .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
             .trustLocalhost(true)
             .send();
 
@@ -336,7 +319,6 @@ describe('API', () => {
           const response = await supertest(apiServer)
             .get('/channel/rejectmessage')
             .set('x-auth', getAuthHeader({ method: 'GET', path: '/channel/rejectmessage' }))
-            .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
             .trustLocalhost(true)
             .send();
 
@@ -351,7 +333,6 @@ describe('API', () => {
           const response = await supertest(apiServer)
             .get('/channel/rejectmessage')
             .set('x-auth', getAuthHeader({ method: 'GET', path: '/channel/rejectmessage' }))
-            .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
             .trustLocalhost(true)
             .send();
 
@@ -368,7 +349,6 @@ describe('API', () => {
           const response = await supertest(apiServer)
             .post('/channel/rejectmessage')
             .set('x-auth', getAuthHeader({ method: 'POST', path: '/channel/rejectmessage', body: { message: customMsg } }))
-            .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
             .trustLocalhost(true)
             .send({ message: customMsg });
 
@@ -386,7 +366,6 @@ describe('API', () => {
           const response = await supertest(apiServer)
             .post('/channel/rejectmessage')
             .set('x-auth', getAuthHeader({ method: 'POST', path: '/channel/rejectmessage', body: { message: customMsg } }))
-            .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
             .trustLocalhost(true)
             .send({ message: customMsg });
 
@@ -404,7 +383,6 @@ describe('API', () => {
           const response = await supertest(apiServer)
             .post('/channel/rejectmessage')
             .set('x-auth', getAuthHeader({ method: 'POST', path: '/channel/rejectmessage', body: { message: newCustomMsg } }))
-            .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
             .trustLocalhost(true)
             .send({ message: newCustomMsg });
 
@@ -421,7 +399,6 @@ describe('API', () => {
           const response = await supertest(apiServer)
             .post('/channel/rejectmessage')
             .set('x-auth', getAuthHeader({ method: 'POST', path: '/channel/rejectmessage', body: { message: null } }))
-            .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
             .trustLocalhost(true)
             .send({ message: null });
 
@@ -439,7 +416,6 @@ describe('API', () => {
           const response = await supertest(apiServer)
             .delete('/channel/rejectmessage')
             .set('x-auth', getAuthHeader({ method: 'DELETE', path: '/channel/rejectmessage' }))
-            .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
             .trustLocalhost(true)
             .send();
 
@@ -456,7 +432,6 @@ describe('API', () => {
           const response = await supertest(apiServer)
             .delete('/channel/rejectmessage')
             .set('x-auth', getAuthHeader({ method: 'DELETE', path: '/channel/rejectmessage' }))
-            .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
             .trustLocalhost(true)
             .send();
 
@@ -473,7 +448,6 @@ describe('API', () => {
           const response = await supertest(apiServer)
             .delete('/channel/rejectmessage')
             .set('x-auth', getAuthHeader({ method: 'DELETE', path: '/channel/rejectmessage' }))
-            .cert(fs.readFileSync(Path.join(process.env.LND_TOOLS_DATADIR, 'lnd-tools.crt')))
             .trustLocalhost(true)
             .send();
 

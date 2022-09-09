@@ -49,28 +49,22 @@ describe('LND', function() {
   before(function(done) {
     this.timeout(10000);
     try {
-      lnd = new Lnd({
-        host: process.env.LND_HOST,
-        port: process.env.LND_PORT,
-        cert: process.env.LND_CERT,
-        macaroon: process.env.LND_MACAROON
-      });
       ({ lnd: main } = lightning.authenticatedLndGrpc({
-        socket: `${process.env.LND_HOST}:${process.env.LND_PORT}`,
+        socket: process.env.LND_RPC,
         cert: process.env.LND_CERT,
         macaroon: process.env.LND_MACAROON
       }));
       ({ lnd: peer } = lightning.authenticatedLndGrpc({
-        socket: `${process.env.LND_PEER_HOST}:${process.env.LND_PEER_PORT}`,
+        socket: process.env.LND_PEER_RPC,
         cert: process.env.LND_PEER_CERT,
         macaroon: process.env.LND_PEER_MACAROON
       }));
 
-      new Promise(async (rs, rj) => { setTimeout(() => rj(new Error('LND not connected')), 2000); const res = await lightning.getWalletInfo({ lnd: main }); return rs(res); })
+      new Promise(async (rs, rj) => { setTimeout(() => rj(new Error('LND not connected: main')), 2000); const res = await lightning.getWalletInfo({ lnd: main }); return rs(res); })
         .catch(done)
         .then((mainWalletInfo) => {
           mainInfo = mainWalletInfo;
-          new Promise(async (rs, rj) => { setTimeout(() => rj(new Error('LND not connected')), 2000); const res = await lightning.getWalletInfo({ lnd: peer }); return rs(res); })
+          new Promise(async (rs, rj) => { setTimeout(() => rj(new Error('LND not connected: peer')), 2000); const res = await lightning.getWalletInfo({ lnd: peer }); return rs(res); })
             .catch(done)
             .then((peerWalletInfo) => {
               peerInfo = peerWalletInfo;
@@ -110,6 +104,7 @@ describe('LND', function() {
   });
 
   beforeEach(() => {
+    lnd = new Lnd();
     // Prevents spamming the test output w/ a bunch of logs
     sinon.stub(console, 'log');
     sinon.stub(console, 'warn');
@@ -117,11 +112,8 @@ describe('LND', function() {
   });
 
   afterEach(() => {
-    sinon.restore();
-  });
-
-  after(() => {
     lnd.unsubscribeAll();
+    sinon.restore();
   });
 
   describe('channelInterceptor', () => {
@@ -138,10 +130,9 @@ describe('LND', function() {
       sinon.spy(logger, 'warn');
 
       const noLnd = new Lnd({
-        host: '256.256.256.256',
-        port: '10000',
-        cert: 'some cert',
-        macaroon: 'some mac'
+        lndrpc: '256.256.256.256:10000',
+        lndcert: 'some cert',
+        lndmacaroon: 'some mac'
       });
 
       noLnd.channelInterceptor();
@@ -157,6 +148,7 @@ describe('LND', function() {
 
     describe('Accept', () => {
       before(async () => {
+        lnd.channelInterceptor();
         await db.collections.CHANNEL.put(peerInfo.public_key, { allowed: true });
       });
 
@@ -169,6 +161,7 @@ describe('LND', function() {
         await Promise.all(channels.map(ch => lightning.closeChannel({ lnd: peer, id: ch.id })));
         await generateBlocks(3); // finalize close channels
         await iUtils.clearDB();
+        lnd.unsubscribeAll();
       });
 
       it('should accept channel request for whitelisted pub key', async function() {
@@ -179,17 +172,19 @@ describe('LND', function() {
 
     describe('Reject', () => {
       before(async () => {
+        lnd.channelInterceptor();
         await iUtils.clearDB();
       });
 
       after(async () => {
+        lnd.unsubscribeAll();
         await iUtils.clearDB();
       });
 
       it('should reject channel request for non-whitelisted pub key with default message', async function() {
         try {
           await lightning.openChannel({ lnd: peer, partner_public_key: mainInfo.public_key, local_tokens: 100000 });
-          return new Error('should have thrown');
+          throw new Error('should have thrown');
         } catch (err) {
           if (!err[2]) { throw err; }
           Array.isArray(err).should.be.true;
@@ -203,7 +198,7 @@ describe('LND', function() {
         try {
           await db.collections.CONFIG.put(constants.LND.ChannelRejectMessageKey, customMsg);
           await lightning.openChannel({ lnd: peer, partner_public_key: mainInfo.public_key, local_tokens: 100000 });
-          return new Error('should have thrown');
+          throw new Error('should have thrown');
         } catch (err) {
           if (!err[2]) { throw err; }
           Array.isArray(err).should.be.true;

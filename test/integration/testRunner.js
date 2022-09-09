@@ -6,6 +6,7 @@ const Mocha = require('mocha');
 const fs = require('fs');
 const Path = require('path');
 const iUtils = require('./integrationUtils');
+const ServerConfig = require('../../server/config');
 
 process.env.MOCHA = 'true';
 process.env.LND_TOOLS_DATADIR = Path.join(__dirname, 'data');
@@ -24,8 +25,6 @@ if (fs.existsSync(process.env.LND_PEER_MACAROON)) {
 if (fs.existsSync(process.env.LND_PEER_CERT)) {
   process.env.LND_PEER_CERT = fs.readFileSync(process.env.LND_PEER_CERT).toString('base64');
 }
-
-iUtils.clearDB();
 
 const test = new Mocha();
 
@@ -48,7 +47,27 @@ function addFile(file) {
 
 addFile('.');
 
-test.run((failures) => {
-  iUtils.rmTestDb();
-  process.exit(failures);
-});
+
+ServerConfig.load({
+  datadir: process.env.LND_TOOLS_DATADIR,
+  pubkey: process.env.API_PUBKEY,
+  useToolsCert: true,
+  lnddir: Path.join(process.env.LND_TOOLS_DATADIR, 'lnd_main'),
+  lndrpc: process.env.LND_RPC,
+  lndmacaroon: process.env.LND_MACAROON,
+  lndcert: process.env.LND_CERT,
+  lndkey: process.env.LND_KEY
+})
+  .catch((err) => {
+    // eslint-disable-next-line no-console
+    console.error(err);
+    process.exit(1);
+  })
+  .then(async () => {
+    await iUtils.initDB();
+    await iUtils.clearDB();
+    test.run((failures) => {
+      iUtils.rmTestDb();
+      process.exit(failures);
+    });
+  });
