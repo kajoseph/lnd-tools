@@ -8,7 +8,7 @@ const server = require('../../server/server');
 const client = require('../../client/client');
 const logger = require('../../lib/logger');
 
-describe.only('Lnd-Tools', () => {
+describe.skip('Lnd-Tools', () => {
   beforeEach(() => {
     sinon.stub(console, 'info');
     sinon.stub(console, 'debug');

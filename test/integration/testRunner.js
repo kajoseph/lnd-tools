@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/* eslint-disable no-console */
 
 require('dotenv').config({ path: '.env' });
 
@@ -64,10 +65,15 @@ ServerConfig.load({
     process.exit(1);
   })
   .then(async () => {
-    await iUtils.initDB();
-    await iUtils.clearDB();
-    test.run((failures) => {
-      iUtils.rmTestDb();
-      process.exit(failures);
-    });
+    try {
+      await iUtils.initDB();
+      await iUtils.clearDB();
+      test.run((failures) => {
+        iUtils.rmTestDb();
+        process.exit(failures);
+      });
+    } catch (err) {
+      console.log(err);
+      process.exit(1);
+    }
   });
