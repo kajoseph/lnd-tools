@@ -12,6 +12,11 @@ if [ $(echo $nodeVersion | sed -r 's/v16.*/v16/') != $engineVersion ]; then
   exit;
 fi
 
+if [ $1 = "prod" ]; then
+  echo Building for production
+  npm run clean:prod;
+fi
+
 # "pkg ." uses the pkg section of package.json for the build configuration
 npm run compile
 
