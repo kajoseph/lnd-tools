@@ -30,7 +30,7 @@ class Config {
     }
 
     // Load config file first
-    this._loadConfigFile({ datadir, config, useToolsCert });
+    await this._loadConfigFile({ datadir, config, useToolsCert });
 
     // Read from lnddir
     lnddir = lnddir || this.lnddir;
@@ -123,7 +123,7 @@ class Config {
       this[key] = value;
     }
     if (this.rejectchannelmessage) {
-      logger.log('Using configured reject channel message: ' + this.rejectchannelmessage);
+      logger.log('Using configured reject channel message: ' + this.rejectchannelmessage, ['config']);
     }
   }
 
