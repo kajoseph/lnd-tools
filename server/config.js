@@ -123,7 +123,7 @@ class Config {
       this[key] = value;
     }
     if (this.rejectchannelmessage) {
-      logger.log('Using configured reject channel message: ' + this.rejectchannelmessage, ['config']);
+      logger.log('Using configured reject channel message: "' + this.rejectchannelmessage + '"', ['config']);
     }
   }
 
