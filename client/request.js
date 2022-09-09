@@ -39,7 +39,8 @@ class ClientRequest {
         port: this.port,
         path,
         headers: {
-          'x-auth': this._buildXAuth({ method, path, body })
+          'x-auth': this._buildXAuth({ method, path, body }),
+          'Content-Type': 'application/json',
         },
         ecdhCurve: this.cert.length > 1000 ? undefined : 'secp256k1',
         cert: this.cert,
