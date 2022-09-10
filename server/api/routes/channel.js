@@ -97,7 +97,7 @@ app.post('/rejectMessage', async (req, res) => {
       return res.status(400).send('Missing message');
     }
     if (message.length > constants.LND.ChannelRejectMessageSizeLimit) {
-      return res.status(400).send('Max message length is ' + constants.LND.ChannelRejectMessageSizeLimit + ' characters')
+      return res.status(400).send('Max message length is ' + constants.LND.ChannelRejectMessageSizeLimit + ' characters');
     }
     await db.collections.CONFIG.put(constants.LND.ChannelRejectMessageKey, message);
     return res.send();

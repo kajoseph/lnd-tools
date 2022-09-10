@@ -27,6 +27,8 @@
     "build": "./build.sh prod",
     "build:dev": "./build.sh",
     "compile": "pkg .",
+    "precommit": "npm run lint",
+    "lint": "eslint --ignore-pattern *.test.js .",
     "test": "test",
     "test:unit": "mocha test/unit/**/*.unit.test.js",
     "ci:test:unit": "npm run test:unit",
