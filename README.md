@@ -20,7 +20,7 @@ To run your server, you'll need to create an authentication private/public key p
 This will output a private and public key pair to `auth.key` and `auth.pub`. By default, it will create and place the files in `$HOME/.lnd-tools`.
 
 The public key (auth.pub) will be used by the server to authenticate requests.
-The private key (auth.key) will be used from a client (either the included client or your custom external service) to sign requests to the server.
+The private key (auth.key) will be used by a client (either the included client or your custom external client) to sign requests to the server.
 
 Start the server with
 ```
