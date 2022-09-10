@@ -4,6 +4,7 @@ const os = require('os');
 const readline = require('readline');
 const KeyGenerator = require('../keyGenerator');
 const logger = require('./logger');
+const constants = require('./constants');
 
 class Config {
   async load({
@@ -123,6 +124,9 @@ class Config {
       this[key] = value;
     }
     if (this.rejectchannelmessage) {
+      if (this.rejectchannelmessage.length > constants.LND.ChannelRejectMessageSizeLimit) {
+        throw new Error('Configured reject channel message is too long. Max length is ' + constants.LND.ChannelRejectMessageSizeLimit + ' but found ' + this.rejectchannelmessage.length);
+      }
       logger.log('Using configured reject channel message: "' + this.rejectchannelmessage + '"', ['config']);
     }
   }

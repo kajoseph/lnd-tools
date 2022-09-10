@@ -18,12 +18,16 @@ csrFile=lnd-tools.csr
 # echo sudo update-ca-certificates
 # echo
 
-if [ $1 == "secp256k1" ]; then
+if [ "$1" == "secp256k1" ]; then
   echo Generating secp256k1 key
   openssl ecparam -genkey -name secp256k1 -out $keyFile;
-else
+elif [ "$1" == "rsa" ] || [ -z $1 ]; then
   echo Generating RSA 2048 key
   openssl genrsa -out $keyFile 2048;
+else
+  echo Unrecognized algorithm: $1
+  echo Usage: tls.sh \[rsa\|secp256k1\] \(Default: rsa\)
+  exit 1;
 fi
 
 echo Generating CSR
