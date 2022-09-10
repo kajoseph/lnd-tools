@@ -8,14 +8,14 @@
 ## Usage
 
 For these instructions, I will use the dev command (i.e. `lnd-tools.js`), but if using a
-binary, you should replace `lnd-tools` with your appropriate binary file.
+binary, you should replace `lnd-tools.js` with your appropriate binary file.
 
 To run your server, you'll need to create an authentication private/public key pair.
 ```
 ./lnd-tools.js keygen
 ```
 
-This will output a private and public key pair to `auth.key` and `auth.pub`.
+This will output a private and public key pair to `auth.key` and `auth.pub`. By default, it will create and place the files in `~/.lnd-tools`.
 
 The public key (auth.pub) will be used by the server to authenticate requests.
 The private key (auth.key) will be used from an external service to sign requests to `lnd-tools`.

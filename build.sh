@@ -1,14 +1,15 @@
+engineVersion=v$(cat package.json | grep '"node":' | sed -r 's/[[:space:]]*["a-z:]*//gi')
 exists=$(which node)
 
 if [ -z $exists ]; then
-  echo node is not installed.
+  echo Node is not installed. Node $engineVersion required.
   exit;
 fi
 
-engineVersion=v$(cat package.json | grep '"node":' | sed -r 's/[[:space:]]*["a-z:]*//gi')
+
 nodeVersion=$(node --version)
 if [ $(echo $nodeVersion | sed -r 's/v16.*/v16/') != $engineVersion ]; then
-  echo node $engineVersion required.
+  echo Node $engineVersion required.
   exit;
 fi
 
@@ -23,5 +24,6 @@ npm run compile
 cp tls.sh ./build
 
 outPath=$(cat package.json | grep '"outputPath":' | sed -r 's/[[:space:]]*["]*//gi' | sed -r 's/(outputPath:)//')
-echo build complete.
-echo output files can be found in ./$outPath
+echo
+echo Build complete.
+echo Output files can be found in ./$outPath
