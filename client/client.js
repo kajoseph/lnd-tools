@@ -69,14 +69,14 @@ const config = program.command('config').description('Set configurations for the
 config
   .command('setRejectMessage')
   .description('Set the channel reject message')
-  .argument('<message>', 'Message string')
+  .argument('<message...>', 'Message string')
   .action(async (message, options) => {
     const clientOpts = program.opts();
     try {
       const req = await new ClientRequest(clientOpts).request({
         method: 'POST',
         path: '/channel/rejectMessage',
-        body: { message }
+        body: { message: message.join(' ') }
       });
       console.log(req);
     } catch (err) {
