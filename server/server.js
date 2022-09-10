@@ -10,18 +10,18 @@ const logger = require('./logger');
 program
   .description('Start the web server and LND interceptors')
   .option('-d, --datadir <dir>',        'Working dir for lnd-tools. You can also set this with the LND_TOOLS_DATADIR env var. (Default: "' + Path.join(os.homedir(), '.lnd-tools') + '")')
-  .option('-c, --config <file>',        'Config file. (Default: <datadir>/lnd-tools.conf)')
-  .option('-k, --pubkey <key>',         'Public key used to authorize web requests. Can be a file or raw hex. (Default: <datadir>/auth.pub)')
-  .option('-p, --port <port>',          'The port you want the web host to be on', '8090')
+  .option('-c, --config <file>',        'LND-Tools config file. (Default: "<datadir>/lnd-tools.conf")')
+  .option('-k, --pubkey <key>',         'Public key used to authorize web requests. Can be a file or raw hex. (Default: "<datadir>/auth.pub")')
+  .option('-p, --port <port>',          'The port you want the HTTP server to listen on', '8090')
   .option('--cors <origins>',           'Comma delimited lists of CORS origins to allow', 'localhost')
-  .option('--useToolsCert',             'If provided, will look for lnd-tools.crt and lnd-tools.key in --datadir. Otherwise, uses LND cert. Use tls.sh to generate a cert')
-  .option('--lnddir <dir>',             'Data directory for LND. ', Path.join(os.homedir(), '.lnd'))
-  .option('--lndconfig <config>',       'Config file for LND. (Default: <lnddir>/lnd.conf)')
+  .option('--useToolsCert',             'If provided, will look for lnd-tools.crt and lnd-tools.key in --datadir. Otherwise, uses LND cert. Use tls.sh to generate a cert.')
+  .option('--lnddir <dir>',             'Data directory for LND. (Default: "' + Path.join(os.homedir(), '.lnd') + '")')
+  .option('--lndconfig <config>',       'Config file for LND. (Default: "<lnddir>/lnd.conf")')
   .option('--lndnetwork <network>',     'The network LND is running on. (Default: "mainnet" or --lndconfig value)')
   .option('--lndrpc <host[:port]>',     'The LND host[:port] (Default: "localhost:10009" or rpclisten in --lndconfig)')
-  .option('--lndmacaroon <macaroon>',   'Path to LND macaroon file. (Default: <lnddir>/../admin.macaroon)')
-  .option('--lndcert <cert>',           'Path to LND cert file. (Default: <lnddir>/tls.cert)')
-  .option('--lndkey <key>',             'Path to LND key file. (Default: <lnddir>/tls.key)');
+  .option('--lndmacaroon <macaroon>',   'Path to LND macaroon file. (Default: "<lnddir>/.../admin.macaroon")')
+  .option('--lndcert <cert>',           'Path to LND cert file. (Default: "<lnddir>/tls.cert")')
+  .option('--lndkey <key>',             'Path to LND key file. (Default: "<lnddir>/tls.key")');
 
 const main = function() {
   const {

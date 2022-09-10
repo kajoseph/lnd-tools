@@ -33,13 +33,13 @@ class Config {
     await this._loadConfigFile({ datadir, config, useToolsCert });
 
     // Read from lnddir
-    lnddir = lnddir || this.lnddir;
-    if (lnddir) {
+    if (lnddir || this.lnddir) {
       await this._loadLndFromDir({ lnddir, lndconfig, lndnetwork, lndrpc, lndmacaroon, lndcert, lndkey });
+    } else if (lndconfig || this.lndconfig) {
+      await this._readLndConfig({ lndconfig });
     }
 
     // Finally, prioritize any explicitly set flags
-
     this.datadir = datadir; // already been defaulted above.
     this.authkey = pubkey || this.pubkey || Path.join(this.datadir, 'auth.pub');
     this.port = port || this.port || '8090';
@@ -128,12 +128,14 @@ class Config {
   }
 
   async _loadLndFromDir({ lnddir, lndconfig, lndnetwork, lndrpc, lndmacaroon, lndcert, lndkey }) {
+    lnddir = lnddir || this.lnddir || Path.join(os.homedir(), '.lnd');
     if (!fs.existsSync(lnddir)) {
-      throw new Error('Provided lnddir does not exist: ' + lnddir);
+      logger.warn('Provided lnddir does not exist: ' + lnddir);
+      return false;
     }
     logger.log('Using LND dir: ' + lnddir, ['config']);
 
-    await this._readLndConfig({ lnddir, lndconfig: lndconfig || 'lnd.conf' });
+    await this._readLndConfig({ lnddir, lndconfig });
 
     this.lndrpc = lndrpc || this.lndrpc || 'localhost:10009';
     this.lndnetwork = lndnetwork || this.lndnetwork || 'mainnet';
@@ -148,9 +150,13 @@ class Config {
     if (!lndmacaroon && fs.existsSync(Path.join(lnddir, 'data/chain/bitcoin', this.lndnetwork, 'admin.macaroon'))) {
       this.lndmacaroon = Path.join(lnddir, 'data/chain/bitcoin', this.lndnetwork, 'admin.macaroon');
     }
+    return true;
   }
 
   async _readLndConfig({ lnddir, lndconfig }) {
+    lnddir = lnddir || this.lnddir || '';
+    lndconfig = lndconfig || this.lndconfig || 'lnd.conf';
+
     const lndFullConfigPath = Path.join(lnddir, lndconfig);
     if (!fs.existsSync(lndFullConfigPath)) {
       logger.log('No LND config found', ['config']);
