@@ -10,6 +10,8 @@
 For these instructions, I will use the dev command (i.e. `lnd-tools.js`), but if using a
 binary, you should replace `lnd-tools.js` with your appropriate binary file.
 
+
+### Serve
 To run your server, you'll need to create an authentication private/public key pair.
 ```
 ./lnd-tools.js keygen
@@ -26,6 +28,42 @@ Start the server with
 ```
 > The above command uses several defaults and creates a data directory in `$HOME/.lnd-tools`. See the [Configuration](#configuration) section below
 
+### Client
+Once the server is running, you can use the client to:
+- Add/Remove/Get whitelist entries for accepting channel open requests.
+- Configure a custom response when denying a channel open request.
+
+Examples:
+
+Get all whitelist entries
+```
+./lnd-tools.js client -k auth.key whitelist list
+```
+
+Add a new public key to the whitelist
+```
+./lnd-tools.js client -k auth.key whitelist add 037f1bbdc42d775c0d3ac4cbae2a676065d98128758718bbbc98c4d0616f7b5eb4
+```
+
+Remove a public key from the whitelist
+```
+./lnd-tools.js client -k auth.key whitelist rm 037f1bbdc42d775c0d3ac4cbae2a676065d98128758718bbbc98c4d0616f7b5eb4
+```
+
+Get the current channel request reject message
+```
+./lnd-tools.js client -k auth.key config getRejectMessage
+```
+
+Set a new channel request reject message
+```
+./lnd-tools.js client -k auth.key config setRejectMessage "This is the new message"
+```
+
+Remove the custom channel request reject message. This will result in the default message being shown.
+```
+./lnd-tools.js client -k auth.key config rmRejectMessage
+```
 
 ## Dev & Debug
 
@@ -82,3 +120,7 @@ npm run test
 ```
 
 > If you encounter an error saying a package is missing, run `npm run clean:dev` and try again.
+
+
+## Examples
+
