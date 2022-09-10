@@ -11,16 +11,16 @@ For these instructions, I will use the dev command (i.e. `lnd-tools.js`), but if
 binary, you should replace `lnd-tools.js` with your appropriate binary file.
 
 
-### Serve
+### Server
 To run your server, you'll need to create an authentication private/public key pair.
 ```
 ./lnd-tools.js keygen
 ```
 
-This will output a private and public key pair to `auth.key` and `auth.pub`. By default, it will create and place the files in `~/.lnd-tools`.
+This will output a private and public key pair to `auth.key` and `auth.pub`. By default, it will create and place the files in `$HOME/.lnd-tools`.
 
 The public key (auth.pub) will be used by the server to authenticate requests.
-The private key (auth.key) will be used from an external service to sign requests to `lnd-tools`.
+The private key (auth.key) will be used from a client (either the included client or your custom external service) to sign requests to the server.
 
 Start the server with
 ```
@@ -73,7 +73,7 @@ cd lnd-tools
 npm install
 ```
 
-I would recommend using [Polar](https://lightningpolar.com) and set up a network. Choose an LND node to be "your" node and point `--lnddir` to its directory (e.g. `--lnddir ~/.polar/networks/1/volumes/lnd/alice`)
+I would recommend using [Polar](https://lightningpolar.com) and set up a network. Choose an LND node to be "your" node and point `--lnddir` to its directory (e.g. `--lnddir $HOME/.polar/networks/1/volumes/lnd/alice`)
 
 Execute the program by running
 ```
