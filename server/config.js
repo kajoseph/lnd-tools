@@ -173,7 +173,7 @@ class Config {
     });
 
     for await (const line of rl) {
-      if (!line || line[0] === '[' || line[0] === '#') {
+      if (!line || line[0] === '[' || line[0] === '#' || line[0] === ';') {
         continue;
       }
       const [key, value] = line.split('=');
