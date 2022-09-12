@@ -13,7 +13,7 @@ if [ $(echo $nodeVersion | sed -r 's/v16.*/v16/') != $engineVersion ]; then
   exit;
 fi
 
-if [ $1 = "prod" ]; then
+if [ "$1" = "prod" ]; then
   echo Building for production
   npm run clean:prod;
 fi
