@@ -179,13 +179,13 @@ class Config {
       const [key, value] = line.split('=');
       switch (key) {
         case 'bitcoin.regtest':
-          this.lndnetwork = (value == true || value == 1) ? 'regtest' : null;
+          this.lndnetwork = (value == true || value == 1 || value == 'true') ? 'regtest' : null;
           break;
         case 'bitcoin.testnet':
-          this.lndnetwork = (value == true || value == 1) ? 'testnet' : null;
+          this.lndnetwork = (value == true || value == 1 || value == 'true') ? 'testnet' : null;
           break;
         case 'bitcoin.mainnet':
-          this.lndnetwork = (value == true || value == 1) ? 'mainnet' : null;
+          this.lndnetwork = (value == true || value == 1 || value == 'true') ? 'mainnet' : null;
           break;
         case 'rpclisten':
           this.lndrpc = value.replace('0.0.0.0', '127.0.0.1');
