@@ -16,11 +16,11 @@ app.get('/whitelist', async (req, res) => {
     let firstOneSent = false;
     let count = 0;
     stream.on('data', (entry) => {
-      if (count === 0) {
-        res.write('[');
-      }
-
       if (entry.value.allowed) {
+        if (!firstOneSent) {
+          res.write('[');
+        }
+
         res.write((firstOneSent ? ',' : '') + `"${entry.key}"`);
         firstOneSent = true;
         count++;
