@@ -16,11 +16,11 @@ app.get('/whitelist', async (req, res) => {
     let firstOneSent = false;
     let count = 0;
     stream.on('data', (entry) => {
-      if (count === 0) {
-        res.write('[');
-      }
-
       if (entry.value.allowed) {
+        if (!firstOneSent) {
+          res.write('[');
+        }
+
         res.write((firstOneSent ? ',' : '') + `"${entry.key}"`);
         firstOneSent = true;
         count++;
@@ -97,7 +97,7 @@ app.post('/rejectMessage', async (req, res) => {
       return res.status(400).send('Missing message');
     }
     if (message.length > constants.LND.ChannelRejectMessageSizeLimit) {
-      return res.status(400).send('Max message length is ' + constants.LND.ChannelRejectMessageSizeLimit + ' characters')
+      return res.status(400).send('Max message length is ' + constants.LND.ChannelRejectMessageSizeLimit + ' characters');
     }
     await db.collections.CONFIG.put(constants.LND.ChannelRejectMessageKey, message);
     return res.send();

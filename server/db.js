@@ -28,10 +28,8 @@ class Database {
     }
     const fullPath = Path.join(path, 'db');
     logger.log('Opening database in ' + fullPath, ['DB']);
-    this.db = new Level(fullPath, { valueEncoding: 'json' });
-    await new Promise(resolve => this.db.once('open', () => {
-      resolve();
-    }));
+    this.db = new Level(fullPath, { valueEncoding: 'json', passive: true });
+    await this.db.open();
   }
 
   model(name) {

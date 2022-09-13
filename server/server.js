@@ -60,7 +60,7 @@ const main = function() {
       // Initialize db
       await db.init({ path: config.datadir });
     } catch (err) {
-      logger.error('Error initializing db', err, ['server']);
+      logger.error('Error initializing db. Is it in use?', err, ['server']);
       process.exit(1);
     }
 
