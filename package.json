@@ -24,8 +24,8 @@
     "start": "node index.js",
     "clean:dev": "rm -rf node_modules && npm i",
     "clean:prod": "rm -rf node_modules && npm i --omit=dev",
-    "build": "./build.sh prod",
-    "build:dev": "./build.sh",
+    "build": "./build.sh",
+    "build:all": "./build.sh --all",
     "compile": "pkg .",
     "precommit": "npm run lint",
     "lint": "eslint --ignore-pattern *.test.js .",
@@ -37,39 +37,31 @@
   },
   "pkg": {
     "assets": [
-      "node_modules/classic-level/prebuilds/**/*",
+      ".temp/node_modules/**/*",
       "server/**/*.js",
       "client/**/*.js",
       "lib/**/*.js",
-      "*.js",
-      "node_modules/!(eslint)**/*"
-    ],
-    "targets": [
-      "node16-linux-x64",
-      "node16-macos-x64",
-      "node16-linux-arm64",
-      "node16-macos-arm64"
-    ],
-    "outputPath": "build"
+      "*.js"
+    ]
   },
   "devDependencies": {
     "chai": "^4.3.6",
     "crypto-rpc": "https://github.com/bitpay/crypto-rpc.git#e8106ed18740b0257a90365e830726cd66e912f6",
     "dotenv": "^16.0.2",
+    "eslint": "^8.23.0",
     "husky": "^8.0.1",
     "mocha": "^10.0.0",
+    "pkg": "^5.8.0",
     "sinon": "^14.0.0",
     "supertest": "^6.2.4"
   },
   "dependencies": {
     "commander": "^9.4.0",
     "cors": "^2.8.5",
-    "eslint": "^8.23.0",
     "express": "^4.18.1",
     "level": "^8.0.0",
     "level-read-stream": "^1.1.0",
     "lightning": "^5.20.1",
-    "pkg": "^5.8.0",
     "secp256k1": "^4.0.3"
   }
 }
