@@ -6,6 +6,7 @@ node_modules
 *.key
 db
 build
+.temp
 *.crt
 *.csr
 *.key
