@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 ENGINE_VERSION=$(cat package.json | grep '"node":' | sed -r 's/[[:space:]]*["a-z:]*//gi')
 EXISTS=$(which node)
 
@@ -121,10 +123,10 @@ done
 
 HAS_OS=1
 HAS_ARCH=1
-if [ -z ${OS_ARR[@]} ]; then
+if [[ -z ${OS_ARR[@]} ]]; then
   HAS_OS=0
 fi
-if [ -z ${ARCH_ARR[@]} ]; then
+if [[ -z ${ARCH_ARR[@]} ]]; then
   HAS_ARCH=0
 fi
 
@@ -141,7 +143,7 @@ elif [ HAS_OS == 1 ] && [ HAS_ARCH == 0 ]; then
 fi
 
 
-for os in $OS_ARR; do
+for os in ${OS_ARR[@]}; do
   transformOS $os
   if [ -z OS_T ]; then
     echo Unknown OS: $os
@@ -149,7 +151,7 @@ for os in $OS_ARR; do
   fi
 done
 
-for arch in $ARCH_ARR; do
+for arch in ${ARCH_ARR[@]}; do
   transformArch $arch
   if [ -z ARCH_T ]; then
     echo Unknown architecture: $arch
@@ -188,9 +190,9 @@ else
   cd build
 fi
 
-for os in $OS_ARR; do
+for os in ${OS_ARR[@]}; do
   transformOS $os
-  for arch in $ARCH_ARR; do
+  for arch in ${ARCH_ARR[@]}; do
     transformArch $arch
 
     TARGET=node$ENGINE_VERSION-$OS_T-$ARCH_T
