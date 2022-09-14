@@ -37,10 +37,12 @@ Usage () {
 
 
 transformOS () {
-  PARAM=$1
-  if [ "${PARAM,,}" == "macos" ]; then
+  #make input lower case
+  PARAM=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+
+  if [ "$PARAM" == "macos" ]; then
     OS_T="macos"
-  elif [ "${PARAM,,}" == "linux" ]; then
+  elif [ "$PARAM" == "linux" ]; then
     OS_T="linux"
   else
     OS_T=
@@ -48,17 +50,19 @@ transformOS () {
 }
 
 transformArch () {
-  PARAM=$1
+  #make input lower case
+  PARAM=$(echo "$1" | tr '[:upper:]' '[:lower:]')
+
   if 
-    [ "${PARAM,,}" == "x64" ] ||
-    [ "${PARAM,,}" == "x86_64" ] ||
-    [ "${PARAM,,}" == "x86" ];
+    [ "$PARAM" == "x64" ] ||
+    [ "$PARAM" == "x86_64" ] ||
+    [ "$PARAM" == "x86" ];
   then
     ARCH_T="x64"
   elif
-    [ "${PARAM,,}" == "arm64" ] ||
-    [ "${PARAM,,}" == "arm" ] || 
-    [ "${PARAM,,}" == "armv8" ];
+    [ "$PARAM" == "arm64" ] ||
+    [ "$PARAM" == "arm" ] || 
+    [ "$PARAM" == "armv8" ];
   then
     ARCH_T="arm64"
   else
@@ -87,9 +91,12 @@ buildForSelf () {
     exit 0
   fi
 
-  if [ "${ARCH,,}" == "x86_64" ]; then
+  # make ARCH lowecase
+  ARCH=$(echo "$ARCH" | tr '[:upper:]' '[:lower:]')
+
+  if [ "$ARCH" == "x86_64" ]; then
     ARCH_ARR=(x64)
-  elif [ "${ARCH,,}" == "arm64" ] || [ "${ARCH,,}" == "aarch64" ]; then
+  elif [ "$ARCH" == "arm64" ] || [ "$ARCH" == "aarch64" ]; then
     ARCH_ARR=(arm64)
   else
     echo Unknown architecture: $ARCH
@@ -196,14 +203,15 @@ for os in ${OS_ARR[@]}; do
     transformArch $arch
 
     TARGET=node$ENGINE_VERSION-$OS_T-$ARCH_T
+    OUTPUT=lnd-tools-$OS_T-$ARCH_T
     echo
-    echo Building $TARGET
+    echo Building $OUTPUT
 
     # reminder: this is being run in the {cwd}/build folder
     CMD="../node_modules/.bin/pkg ../lnd-tools.js \
       --config ../package.json \
       --target $TARGET \
-      --output lnd-tools-$OS_T-$ARCH_T \
+      --output $OUTPUT \
       --compress GZip"
       
     if [ $BYTECODE == 0 ]; then
@@ -213,7 +221,7 @@ for os in ${OS_ARR[@]}; do
         --public"
     fi
 
-    exec $CMD
+    $CMD
   done
 done
 
