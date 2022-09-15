@@ -37,11 +37,7 @@
   },
   "pkg": {
     "assets": [
-      ".temp/node_modules/**/*",
-      "server/**/*.js",
-      "client/**/*.js",
-      "lib/**/*.js",
-      "*.js"
+      ".temp/**/*"
     ]
   },
   "devDependencies": {

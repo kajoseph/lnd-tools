@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+
+CWD=$(dirname $(realpath "$0"))
+cd $CWD
+
 ENGINE_VERSION=$(cat package.json | grep '"node":' | sed -r 's/[[:space:]]*["a-z:]*//gi')
 EXISTS=$(which node)
 
@@ -26,6 +30,7 @@ Usage () {
   echo "  --arch <value>    Comma delimited list of: x64, arm64. No spaces. Required if --os is given"
   echo "  --all             Build all possible OS-arch combinations"
   echo "  --binary          Only output bytecode binaries. This will produce non-deterministic builds"
+  echo "  --checksum        Output the checksums after the builds"
   echo "  -h, --help        Output this help message"
   echo
   echo "Example:"
@@ -108,6 +113,7 @@ buildForSelf () {
 # Parse input
 
 BYTECODE=0
+CHECKSUM=0
 
 for i in `seq 1 $#`; do
   PLUS1=$(( $i + 1 ))
@@ -123,6 +129,8 @@ for i in `seq 1 $#`; do
     ARCH_ARR=("x64", "arm64")
   elif [ "${!i}" == "--binary" ]; then
     BYTECODE=1
+  elif [ "${!i}" == "--checksum" ]; then
+    CHECKSUM=1
   elif [ "${!i}" == "--help" ] || [ "${!i}" == "-h" ]; then
     Usage
   fi
@@ -179,13 +187,16 @@ echo Making .temp
 mkdir .temp
 cp package.json .temp
 cp package-lock.json .temp
+cp *.js .temp
+cp -r server .temp
+cp -r client .temp
 
 cd .temp
 
 echo Installing dependencies
 npm i --omit=dev
 
-cd ..
+cd $CWD
 
 # =========================
 # Build the binaries
@@ -207,8 +218,8 @@ for os in ${OS_ARR[@]}; do
     echo
     echo Building $OUTPUT
 
-    # reminder: this is being run in the {cwd}/build folder
-    CMD="../node_modules/.bin/pkg ../lnd-tools.js \
+    # reminder: this is being run in the $CWD/build folder
+    CMD="../node_modules/.bin/pkg ../.temp/lnd-tools.js \
       --config ../package.json \
       --target $TARGET \
       --output $OUTPUT \
@@ -226,15 +237,28 @@ for os in ${OS_ARR[@]}; do
 done
 
 # cd back to cwd
-cd ..
+cd $CWD
 
+echo
 echo Removing .temp folder
 rm -rf .temp
 
 cp ./tls.sh ./build
 
+if [ $CHECKSUM == 1 ]; then
+  cd build
+  echo
+  echo Calculating checksums
+  for os in ${OS_ARR[@]}; do
+  transformOS $os
+    for arch in ${ARCH_ARR[@]}; do
+      transformArch $arch
+      shasum -a 256 lnd-tools-$OS_T-$ARCH_T
+    done
+  done
+  cd $CWD
+fi
 
-outPath=$(cat package.json | grep '"outputPath":' | sed -r 's/[[:space:]]*["]*//gi' | sed -r 's/(outputPath:)//')
 echo
 echo Build complete.
-echo Output files can be found in ./$outPath
+echo Output files can be found in $CWD/build
