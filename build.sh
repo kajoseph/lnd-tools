@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 
-CWD=$(dirname $(realpath "$0"))
+CWD=$(dirname $(readlink -f "$0"))
 cd $CWD
 
 ENGINE_VERSION=$(cat package.json | grep '"node":' | sed -r 's/[[:space:]]*["a-z:]*//gi')
