@@ -146,13 +146,13 @@ if [[ -z ${ARCH_ARR[@]} ]]; then
 fi
 
 # If neither --os nor --arch was given...
-if [ HAS_OS == 0 ] && [ HAS_ARCH == 0 ]; then
+if [ $HAS_OS == 0 ] && [ $HAS_ARCH == 0 ]; then
   # ...default to building for self
   buildForSelf
-elif [ HAS_OS == 0 ] && [ HAS_ARCH == 1 ]; then
+elif [ $HAS_OS == 0 ] && [ $HAS_ARCH == 1 ]; then
   # --os was not given but --arch was
   Usage
-elif [ HAS_OS == 1 ] && [ HAS_ARCH == 0 ]; then
+elif [ $HAS_OS == 1 ] && [ $HAS_ARCH == 0 ]; then
   # --os was given but --arch was not
   Usage
 fi
@@ -160,7 +160,7 @@ fi
 
 for os in ${OS_ARR[@]}; do
   transformOS $os
-  if [ -z OS_T ]; then
+  if [ -z $OS_T ]; then
     echo Unknown OS: $os
     exit 1
   fi
@@ -168,7 +168,7 @@ done
 
 for arch in ${ARCH_ARR[@]}; do
   transformArch $arch
-  if [ -z ARCH_T ]; then
+  if [ -z $ARCH_T ]; then
     echo Unknown architecture: $arch
     exit 1
   fi
