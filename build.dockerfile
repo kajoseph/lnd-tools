@@ -6,8 +6,6 @@ RUN apt -y install git curl
 RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
 RUN apt-get install -y nodejs
 
-RUN git --version
-
 VOLUME /lnd-tools/build
 
 WORKDIR /lnd-tools
