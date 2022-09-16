@@ -5,6 +5,7 @@
 * Node.JS v16
 
 
+
 ## Usage
 
 For these instructions, I will use the dev command (i.e. `lnd-tools.js`), but if using a
@@ -65,6 +66,7 @@ Remove the custom channel request reject message. This will result in the defaul
 ./lnd-tools.js client -k auth.key config rmRejectMessage
 ```
 
+
 ## Dev & Debug
 
 Clone the repo then run:
@@ -79,6 +81,7 @@ Execute the program by running
 ```
 ./lnd-tools.js <...args>
 ```
+
 
 ## Configuration
 
@@ -99,18 +102,38 @@ rejectchannelmessage=Please reach out to lightning@mydomain.com to open a channe
 ```
 
 
-
 ## Build
 
-To build the binaries *for production*, simply run
-
-> Note: this will remove your node_modules and reinstall them without dev dependencies. 
+To build the binaries, simply run
 
 ```
 npm run build
 ```
 
-You can also build them *without* removing your node_modules by running `npm run build:dev`. It is highly recommended that you always run `npm run build` when using the binaries in a production environment. The purpose of `npm run build:dev` is just so you don't mess up your dependencies
+or 
+
+```
+./build.sh [options]
+```
+
+Running the npm script or `./build.sh` without options will build the binaries for your local machine's OS and architecture. You can specify options to `./build.sh` to build for other OS's and architectures.
+
+### Reproduceable Builds
+
+To build deterministically across various platforms, you must have Docker-compose installed.
+
+```
+docker compose build
+docker compose run --rm build ./build.sh [options]
+```
+
+> The `--rm` flag ensures that the container used to run your build is deleted once the build completes. The binaries are still written to `./build`
+
+Example:
+```
+docker compose run --rm build ./build.sh --os macos,linux --arch x4 --checksum
+```
+
 
 ## Testing
 
@@ -118,9 +141,3 @@ To run tests:
 ```
 npm run test
 ```
-
-> If you encounter an error saying a package is missing, run `npm run clean:dev` and try again.
-
-
-## Examples
-

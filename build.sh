@@ -13,7 +13,7 @@ Usage () {
   echo "  --os <value>      Comma delimited list of: macos, linux. No spaces. Required if --arch is given"
   echo "  --arch <value>    Comma delimited list of: x64, arm64. No spaces. Required if --os is given"
   echo "  --all             Build all possible OS-arch combinations"
-  echo "  --binary          Only output bytecode binaries. This will produce non-deterministic builds"
+  echo "  --bytecode        Binaries will only have bytecode (no javascript). This will produce non-deterministic builds"
   echo "  --checksum        Output the checksums after the builds"
   echo "  -h, --help        Output this help message"
   echo
@@ -146,7 +146,7 @@ for i in `seq 1 $#`; do
   elif [ "${!i}" == "--all" ]; then
     OS_ARR=("linux", "macos")
     ARCH_ARR=("x64", "arm64")
-  elif [ "${!i}" == "--binary" ]; then
+  elif [ "${!i}" == "--bytecode" ]; then
     BYTECODE=1
   elif [ "${!i}" == "--checksum" ]; then
     CHECKSUM=1
