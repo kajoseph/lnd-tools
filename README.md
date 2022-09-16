@@ -131,7 +131,7 @@ docker compose run --rm build ./build.sh [options]
 
 Example:
 ```
-docker compose run --rm build ./build.sh --os macos,linux --arch x4 --checksum
+docker compose run --rm build ./build.sh --os macos,linux --arch x64 --checksum
 ```
 
 
