@@ -8,6 +8,16 @@ RUN apt-get install -y nodejs
 
 RUN git --version
 
-VOLUME /build
+VOLUME /lnd-tools/build
 
-WORKDIR /build
+WORKDIR /lnd-tools
+
+COPY *.js .
+COPY server ./server
+COPY client ./client
+COPY package.json .
+COPY package-lock.json .
+COPY build.sh .
+COPY tls.sh .
+
+RUN npm i

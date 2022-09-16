@@ -6,5 +6,5 @@ services:
       context: .
       dockerfile: build.dockerfile
     volumes:
-        - ./:/build
+        - ./build:/lnd-tools/build
   
