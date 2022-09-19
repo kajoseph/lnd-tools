@@ -101,9 +101,9 @@ if [ "$ANS" == "n" ]; then
 fi
 
 
-mkdir -p release/$VERSION 2>/dev/null
+mkdir -p releases/$VERSION 2>/dev/null
 
-SHA256SUM_FILENAME=$CWD/release/$VERSION/SHA256SUM
+SHA256SUM_FILENAME=$CWD/releases/$VERSION/SHA256SUM
 
 # ================
 # --pack
@@ -113,7 +113,7 @@ if [ "$PACK" == "1" ]; then
   for os in {linux,macos}; do
     for arch in {x64,arm64}; do
       if [ -e build/lnd-tools-$os-$arch ]; then
-        tar -C build --xz -cvf release/$VERSION/lnd-tools-$os-$arch.tar.xz lnd-tools-$os-$arch
+        tar -C build --xz -cvf releases/$VERSION/lnd-tools-$os-$arch.tar.xz lnd-tools-$os-$arch
       fi
     done
   done
@@ -218,5 +218,3 @@ else
   echo Not signed.
   exit 0
 fi
-
-#tar -C build --xz -cvf build/lnd-tools-linux-x64 release/$VERSION
