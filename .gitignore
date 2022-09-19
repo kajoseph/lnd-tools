@@ -11,6 +11,7 @@ build
 *.csr
 *.key
 test/integration/data/temp
+release/**/*.tar*
 
 # exceptions
 !test/integration/data/**/*.crt
