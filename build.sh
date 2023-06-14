@@ -119,7 +119,7 @@ fi
 
 
 NODE_VERSION=$(node --version)
-if [ $(echo $NODE_VERSION | sed -r 's/v16.*/v16/') != "v$ENGINE_VERSION" ]; then
+if [ $(echo $NODE_VERSION | sed -r "s/v$ENGINE_VERSION.*/v$ENGINE_VERSION/") != "v$ENGINE_VERSION" ]; then
   echo Node v$ENGINE_VERSION required.
   exit;
 fi

@@ -2,7 +2,7 @@
 
 ## Requirements
 
-* Node.JS v16
+* Node.JS v18
 
 
 

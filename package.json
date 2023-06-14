@@ -6,7 +6,7 @@
   "bin": "lnd-tools.js",
   "license": "ISC",
   "engines": {
-    "node": "16"
+    "node": "18"
   },
   "keywords": [
     "bitcoin",
@@ -56,12 +56,12 @@
     "supertest": "^6.2.4"
   },
   "dependencies": {
-    "commander": "^9.4.0",
+    "commander": "^10.0.1",
     "cors": "^2.8.5",
-    "express": "^4.18.1",
+    "express": "^4.18.2",
     "level": "^8.0.0",
     "level-read-stream": "^1.1.0",
-    "lightning": "^5.20.1",
-    "secp256k1": "^4.0.3"
+    "lightning": "^9.6.0",
+    "secp256k1": "^5.0.0"
   }
 }
