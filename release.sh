@@ -56,7 +56,7 @@ cd $CWD
 
 
 
-VERSION=$(git tag)
+VERSION=$(git describe --tags)
 INIT=0
 OS_ARR={}
 ARCH_ARR={}
@@ -104,6 +104,7 @@ if [ "$ANS" == "n" ]; then
   exit 0
 fi
 
+git checkout $VERSION &>/dev/null
 
 mkdir -p releases/$VERSION 2>/dev/null
 
@@ -222,3 +223,5 @@ else
   echo Not signed.
   exit 0
 fi
+
+git switch -
