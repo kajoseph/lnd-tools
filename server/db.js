@@ -10,7 +10,8 @@ class Database {
     // need to call init for these to work.
     this.collections = {
       CHANNEL: new DatabaseModel({ isStub: true }),
-      CONFIG: new DatabaseModel({ isStub: true })
+      CONFIG: new DatabaseModel({ isStub: true }),
+      LOG: new DatabaseModel({ isStub: true })
     };
 
     for (let collection in this.collections) {

@@ -4,9 +4,30 @@ class Logger {
   _logIt(severity, msg, data, tags) {
     tags = tags || [];
     const now = new Date();
-    console[severity](`[${now.toISOString()}] :: ${severity.toUpperCase()} :: {${tags.join(',')}} :: ${msg}`);
+    const logString = `[${now.toISOString()}] :: ${severity.toUpperCase()} :: {${tags.join(',')}} :: ${msg}`;
+    console[severity](logString);
     if (data) {
       console[severity]('\t' + (data.stack || JSON.stringify(data)));
+    }
+
+    const db = require('./db');
+    const config = require('./config');
+
+    if (db.db && config.dblogtimewindow > 0) {
+      try {
+        const ROLLING_LOG_WINDOW = config.dblogtimewindow;
+        const s = severity.toLowerCase();
+
+        db.collections.LOG.put(`${now.getTime()}_${s}`, {
+          severity: s,
+          timestamp: now.getTime(),
+          log: logString + (data ? '\n\t' + (data.stack || JSON.stringify(data)) : '')
+        })
+          .then(() => db.collections.LOG.db.clear({ lt: now.getTime() - ROLLING_LOG_WINDOW }))
+          .catch(console.error);
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
 

@@ -21,7 +21,8 @@ program
   .option('--lndrpc <host[:port]>',     'The LND host[:port] (Default: "localhost:10009" or rpclisten in --lndconfig)')
   .option('--lndmacaroon <macaroon>',   'Path to LND macaroon file. (Default: "<lnddir>/.../admin.macaroon")')
   .option('--lndcert <cert>',           'Path to LND cert file. (Default: "<lnddir>/tls.cert")')
-  .option('--lndkey <key>',             'Path to LND key file. (Default: "<lnddir>/tls.key")');
+  .option('--lndkey <key>',             'Path to LND key file. (Default: "<lnddir>/tls.key")')
+  .option('--dblogtimewindow <value>',  'Rolling time window to keep logs in the db (default: 2w). Unit options are m[inutes], h[ours], d[ays], w[eeks], M[onths], y[ears]. Set to 0 to turn off logging in the db.');
 
 const main = function() {
   const {
@@ -36,7 +37,8 @@ const main = function() {
     lndnetwork,
     lndrpc,
     lndmacaroon,
-    lndcert
+    lndcert,
+    dblogtimewindow
   } = program.opts();
 
   Config.load({
@@ -51,7 +53,8 @@ const main = function() {
     lndnetwork,
     lndrpc,
     lndmacaroon,
-    lndcert
+    lndcert,
+    dblogtimewindow
   }).catch((err) => {
     logger.error('Error loading config', err, ['server']);
     process.exit(1);

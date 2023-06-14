@@ -11,6 +11,8 @@ app.get('/whitelist', async (req, res) => {
   try {
     let error;
     const { limit } = req.query;
+
+    // can't pass in limit here b/c needs to filter on entry.value.allowed first
     const stream = db.collections.CHANNEL.getStream();
 
     let firstOneSent = false;
@@ -25,11 +27,11 @@ app.get('/whitelist', async (req, res) => {
         firstOneSent = true;
         count++;
         if (count == limit) {
-          stream.emit('end');
+          stream.destroy();
         }
       }
     });
-    stream.on('end', () => {
+    stream.on('close', () => {
       if (error) {
         return res.status(500).send(error.message || error);
       }
@@ -41,10 +43,10 @@ app.get('/whitelist', async (req, res) => {
     });
     stream.on('error', (err) => {
       error = err;
-      logger.error('Error streaming whitelist request: ', err, ['API']);
+      logger.error('Error streaming whitelist request: ', err, ['API', 'channel', 'whitelist']);
     });
   } catch (err) {
-    logger.error('Error getting whitelist', err, ['API']);
+    logger.error('Error getting whitelist', err, ['API', 'channel', 'whitelist']);
     return res.status(500).send(err.message);
   }
 });
@@ -59,7 +61,7 @@ app.post('/whitelist/:pubKey', validatePubKey, async (req, res) => {
     await db.collections.CHANNEL.put(pubKey, { allowed: true });
     return res.send();
   } catch (err) {
-    logger.error('Error adding pubkey to whitelist', err, ['API']);
+    logger.error('Error adding pubkey to whitelist', err, ['API', 'channel', 'whitelist']);
     return res.status(500).send(err.message);
   }
 });
@@ -75,7 +77,7 @@ app.delete('/whitelist/:pubKey', validatePubKey, async (req, res) => {
     await db.collections.CHANNEL.put(pubKey, val);
     return res.send();
   } catch (err) {
-    logger.error('Error removing pubkey from whitelist', err, ['API']);
+    logger.error('Error removing pubkey from whitelist', err, ['API', 'channel', 'whitelist']);
     return res.status(500).send(err.message);
   }
 });
@@ -85,7 +87,7 @@ app.get('/rejectMessage', async (req, res) => {
     const msg = await db.collections.CONFIG.get(constants.LND.ChannelRejectMessageKey);
     return res.send(msg || config.rejectchannelmessage || constants.LND.ChannelRejectMessage);
   } catch (err) {
-    logger.error('Error retreiving rejectMessage', err, ['API']);
+    logger.error('Error retreiving rejectMessage', err, ['API', 'channel', 'rejectMessage']);
     return res.status(500).send(err.message);
   }
 });
@@ -102,7 +104,7 @@ app.post('/rejectMessage', async (req, res) => {
     await db.collections.CONFIG.put(constants.LND.ChannelRejectMessageKey, message);
     return res.send();
   } catch (err) {
-    logger.error('Error updating rejectMessage', err, ['API']);
+    logger.error('Error updating rejectMessage', err, ['API', 'channel', 'rejectMessage']);
     return res.status(500).send(err.message);
   }
 });
@@ -112,7 +114,7 @@ app.delete('/rejectMessage', async (req, res) => {
     await db.collections.CONFIG.del(constants.LND.ChannelRejectMessageKey);
     return res.send();
   } catch (err) {
-    logger.error('Error removing rejectMessage', err, ['API']);
+    logger.error('Error removing rejectMessage', err, ['API', 'channel', 'rejectMessage']);
     return res.status(500).send(err.message);
   }
 });

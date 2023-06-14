@@ -20,7 +20,8 @@ class Config {
     lndrpc,
     lndmacaroon,
     lndcert,
-    lndkey
+    lndkey,
+    dblogtimewindow
   }) {
     datadir = datadir || process.env.LND_TOOLS_DATADIR || Path.join(os.homedir(), '.lnd-tools');
     if (!fs.existsSync(datadir)) {
@@ -96,6 +97,13 @@ class Config {
       logger.log('Using API cert key: ' + this.apicertkey, ['config']);
       this.apicertkey = fs.readFileSync(this.apicertkey).toString('base64');
     }
+
+    const dbltw = dblogtimewindow || this.dblogtimewindow;
+    this.dblogtimewindow = this._getDbLogTimeWindow({ dblogtimewindow: dbltw });
+    if (isNaN(this.dblogtimewindow)) {
+      throw new Error('Invalid dblogtimewindow: `' + this.dblogtimewindow + '`');
+    }
+    logger.log('Using DB log rolling time window: ' + dbltw + ' (' + this.dblogtimewindow + ' seconds)', ['config']);
 
     return this;
   }
@@ -206,6 +214,76 @@ class Config {
 
     this.apicertkey = keyFile;
     this.apicert = certFile;
+  }
+
+  _getDbLogTimeWindow({ dblogtimewindow }) {
+    const ONE_MINUTE = 1000 * 60;
+    const ONE_HOUR = ONE_MINUTE * 60;
+    const ONE_DAY = ONE_HOUR * 24;
+
+    if (dblogtimewindow == null) {
+      return ONE_DAY * 14; // 2 weeks
+    }
+
+    if (dblogtimewindow == 0) {
+      return 0;
+    }
+
+    let idx = dblogtimewindow.toLowerCase().indexOf('minute');
+    if (idx > -1) {
+      return dblogtimewindow.substring(0, idx) * ONE_MINUTE;
+    }
+
+    idx = dblogtimewindow.toLowerCase().indexOf('hour');
+    if (idx > -1) {
+      return dblogtimewindow.substring(0, idx) * ONE_HOUR;
+    }
+
+    idx = dblogtimewindow.toLowerCase().indexOf('day');
+    if (idx > -1) {
+      return dblogtimewindow.substring(0, idx) * ONE_DAY;
+    }
+
+    idx = dblogtimewindow.toLowerCase().indexOf('week');
+    if (idx > -1) {
+      return dblogtimewindow.substring(0, idx) * ONE_DAY * 7;
+    }
+
+    idx = dblogtimewindow.toLowerCase().indexOf('month');
+    if (idx > -1) {
+      return dblogtimewindow.substring(0, idx) * ONE_DAY * 30;
+    }
+
+    idx = dblogtimewindow.toLowerCase().indexOf('year');
+    if (idx > -1) {
+      return dblogtimewindow.substring(0, idx) * ONE_DAY * 365;
+    }
+
+    if (dblogtimewindow.endsWith('m')) {
+      return dblogtimewindow.slice(0, -1) * ONE_MINUTE;
+    }
+
+    if (dblogtimewindow.endsWith('h')) {
+      return dblogtimewindow.slice(0, -1) * ONE_HOUR;
+    }
+
+    if (dblogtimewindow.endsWith('d')) {
+      return dblogtimewindow.slice(0, -1) * ONE_DAY;
+    }
+
+    if (dblogtimewindow.endsWith('w')) {
+      return dblogtimewindow.slice(0, -1) * ONE_DAY * 7;
+    }
+
+    if (dblogtimewindow.endsWith('M')) {
+      return dblogtimewindow.slice(0, -1) * ONE_DAY * 30;
+    }
+
+    if (dblogtimewindow.endsWith('y')) {
+      return dblogtimewindow.slice(0, -1) * ONE_DAY * 365;
+    }
+
+    throw new Error('Invalid dblogtimewindow: `' + dblogtimewindow + '`. Unit options are h[ours], d[ays], w[eeks], m[onths], y[ears]. Set to 0 to turn off saving logs in the db.');
   }
 };
 

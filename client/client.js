@@ -117,6 +117,51 @@ config
   });
 
 
+const logs = program.command('logs').description('Query lnd-tools DB logs');
+
+logs
+  .command('get')
+  .description('Get lnd-tools DB logs')
+  .option('-l, --limit <value>', 'Number of entries to return (default: 100)')
+  .option('-s, --startDate <value>', 'Timestamp (UTC) start of logs (inclusive)')
+  .option('-e, --endDate <value>', 'Timestamp (UTC) end of logs (exclusive)')
+  .action(async (options) => {
+    const clientOpts = program.opts();
+    const query = Object.keys(options).length ? '?' + Object.entries(options).map(([key, val]) => `${key}=${val}`).join('&') : '';
+    try {
+      const req = await new ClientRequest(clientOpts).request({
+        method: 'GET',
+        path: '/log' + query
+      });
+      console.log(req);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+
+logs
+  .command('rm')
+  .description('Delete lnd-tools logs from the DB. USE CAREFULLY!')
+  .option('-b, --before <value>', 'Delete all logs before this timestamp (UTC) (exclusive)')
+  .option('-a, --after <value>', 'Delete all logs after this timestamp (UTC) (exclusive)')
+  .option('--limit <value>', 'Max number of entries to delete')
+  .option('--desc', 'Delete in descending date order. Only works when used with --limit param')
+  .action(async (options) => {
+    const clientOpts = program.opts();
+    const query = Object.keys(options).length ? '?' + Object.entries(options).map(([key, val]) => `${key}=${val}`).join('&') : '';
+    try {
+      const req = await new ClientRequest(clientOpts).request({
+        method: 'DELETE',
+        path: '/log' + query
+      });
+      console.log(req);
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+
 if (process.env.MOCHA) {
   module.exports = {
     program

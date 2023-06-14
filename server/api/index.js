@@ -25,6 +25,7 @@ module.exports = () => {
 
   // Routes
   app.use('/channel', auth(config.authkey), require('./routes/channel'));
+  app.use('/log', auth(config.authkey), require('./routes/log'));
 
   // TLS config
   if (!config.lndkey) {

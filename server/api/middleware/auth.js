@@ -20,6 +20,7 @@ module.exports = function(key) {
     } catch (err) {
       logger.error('Error authorizing request: ', err, ['API']);
     }
+    logger.warn('Unauthorized request.', { headers: req.headers, method: req.method, path: req.originalUrl }, ['API']);
     return res.status(406).send('Unauthorized.');
   };
 };
