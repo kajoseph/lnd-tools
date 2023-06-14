@@ -75,7 +75,7 @@ cd lnd-tools
 npm install
 ```
 
-I would recommend using [Polar](https://lightningpolar.com) and set up a network. Choose an LND node to be "your" node and point `--lnddir` to its directory (e.g. `--lnddir $HOME/.polar/networks/1/volumes/lnd/alice`)
+I would recommend using [Polar](https://lightningpolar.com) and set up a network. Choose an LND node to be "your" node and point `--lnddir` to its directory (e.g. `--lnddir $HOME/.polar/networks/1/volumes/lnd/alice`). Don't forget to also set --lndnetwork and --lndrpc.
 
 Execute the program by running
 ```

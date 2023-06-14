@@ -80,7 +80,11 @@ for i in `seq 1 $#`; do
   fi
 done
 
-
+LIGHT_RED='\033[1;31m' # ref https://stackoverflow.com/a/5947802
+NO_COLOR='\033[0m'
+PACKAGE_VERSION=v$(cat package.json | grep '"version":' | sed -r 's/[[:space:]]*["a-z:]*//gi' | sed -r 's/,//gi' )
+echo -e "<< Package version is ${LIGHT_RED}$PACKAGE_VERSION${NO_COLOR} >>"
+echo
 
 if [ -z $VERSION ]; then
   echo Need to select a tag to release with \`git tag\`
