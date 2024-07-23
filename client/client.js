@@ -9,7 +9,7 @@ program
   .requiredOption('-k, --key <keyFile>',  'Private key for authorizing to the web server. Can be a file or raw hex')
   .option('-h, --host <host>', 'Host the web server is running on', 'localhost')
   .option('-p, --port <port>', 'Port the web server is running on', '8090')
-  .option('-c, --cert <certFile>', 'TLS cert to the web server.', './lnd-tools.crt');
+  .option('-c, --cert <certFile>', 'TLS cert to the web server. Use this for self-signed certs');
 
 const whitelist = program.command('whitelist').description('Manage the LND channels whitelist');
 

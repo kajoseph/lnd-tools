@@ -5,11 +5,11 @@ const fs = require('fs');
 
 class ClientRequest {
   constructor({ key, host, port, cert }) {
-    if (fs.existsSync(key)) {
+    if (fs.existsSync(key?.replace('~', '$HOME'))) {
       key = fs.readFileSync(key);
       key = key.toString('utf8');
     }
-    if (fs.existsSync(cert)) {
+    if (fs.existsSync(cert?.replace('~', '$HOME'))) {
       cert = fs.readFileSync(cert);
       cert = cert.toString('utf8');
     }
@@ -17,6 +17,12 @@ class ClientRequest {
     this.host = host;
     this.port = port;
     this.cert = cert;
+    if (cert) {
+      const pubkeyObj = crypto.createPublicKey(cert);
+      if (pubkeyObj.asymmetricKeyType === 'ec') {
+        this.ecdhCurve = pubkeyObj.asymmetricKeyDetails.namedCurve;
+      }
+    }
   }
 
   _buildXAuth({ method, path, body }) {
@@ -42,9 +48,9 @@ class ClientRequest {
           'x-auth': this._buildXAuth({ method, path, body }),
           'Content-Type': 'application/json'
         },
-        ecdhCurve: this.cert.length > 1000 ? undefined : 'secp256k1',
-        cert: this.cert,
-        rejectUnauthorized: process.env.NODE_TLS_REJECT_UNAUTHORIZED || false
+        ecdhCurve: this.ecdhCurve,
+        ca: this.cert,
+        rejectUnauthorized: process.env.NODE_TLS_REJECT_UNAUTHORIZED != '0' ?? true
       });
 
       req.on('response', (res) => {
@@ -66,6 +72,9 @@ class ClientRequest {
       });
 
       req.on('error', (err) => {
+        if (err.message === 'self-signed certificate') {
+          return reject(new Error('Self-signed certificate. Provide the server\'s --cert (recommended) or set NODE_TLS_REJECT_UNAUTHORIZED=0 to bypass'));
+        }
         reject(err);
       });
 

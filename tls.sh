@@ -1,6 +1,6 @@
 keyFile=lnd-tools.key
 certFile=lnd-tools.crt
-csrFile=lnd-tools.csr
+# csrFile=lnd-tools.csr
 
 # CAname=MyLocalCA
 
@@ -30,14 +30,16 @@ else
   exit 1;
 fi
 
-echo Generating CSR
-openssl req -new -sha256 -key $keyFile -out $csrFile;
+# echo Generating CSR
+# openssl req -new -sha256 -key $keyFile -out $csrFile;
 echo Generating cert
-openssl x509 -req -in $csrFile -signkey $keyFile -out $certFile;
+# openssl x509 -req -in $csrFile -signkey $keyFile -out $certFile;
+openssl req -new -x509 -key $keyFile -out $certFile;
+
 
 echo Cert created: $certFile
 
-rm $csrFile
+# rm $csrFile
 
 # openssl pkcs12 -export -in $certFile -inkey $keyFile \
 #       -certfile $HOME/.bp/ssl/MyCA.pem -out lnd-tools.pfx
