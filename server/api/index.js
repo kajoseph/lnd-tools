@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const https = require('https');
+const crypto = require('crypto');
 const auth = require('./middleware/auth');
 const config = require('../config');
 const logger = require('../logger');
@@ -37,8 +38,11 @@ module.exports = () => {
     process.exit(1);
   }
 
+  const pubkeyObj = crypto.createPublicKey(Buffer.from(config.apicert, 'base64').toString());
+  const ecdhCurve = pubkeyObj.asymmetricKeyType === 'ec' ? pubkeyObj.asymmetricKeyDetails.namedCurve : undefined;
+
   const server = https.createServer({
-    ecdhCurve: config.apicertkey.length > 2000 ? undefined : 'secp256k1',
+    ecdhCurve,
     key: Buffer.from(config.apicertkey, 'base64'),
     cert: Buffer.from(config.apicert, 'base64')
   }, app);
