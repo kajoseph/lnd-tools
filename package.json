@@ -1,6 +1,6 @@
 {
   "name": "lnd-tools",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "On-host tools for LND",
   "main": "lnd-tools.js",
   "bin": "lnd-tools.js",
