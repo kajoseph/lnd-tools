@@ -106,6 +106,23 @@ buildForSelf () {
 # ===============
 
 
+VERSION=v$(cat package.json | grep '"version":' | sed -r 's/[[:space:]]*["a-z:]*//gi' | sed -r 's/,//gi' )
+
+echo Building $VERSION. Is that correct? \(y/n\)
+read ANS
+
+if [ "$ANS" != "y" ]; then
+  echo If this is a new version, be sure to update package.json.
+  echo Exiting.
+  exit 0
+fi
+
+if [ "$ANS" == "n" ]; then
+  echo Please select the version you wish to build with \`git tag\`
+  exit 0
+fi
+
+
 CWD=$(dirname $(readlink -f "$0"))
 cd $CWD
 
@@ -199,7 +216,7 @@ for os in ${OS_ARR[@]}; do
     transformArch $arch
 
     TARGET=node$ENGINE_VERSION-$OS_T-$ARCH_T
-    OUTPUT=lnd-tools-$OS_T-$ARCH_T
+    OUTPUT=lnd-tools-$OS_T-$ARCH_T-$VERSION
     echo
     echo Building $OUTPUT
 
@@ -273,7 +290,7 @@ if [ $CHECKSUM == 1 ]; then
   transformOS $os
     for arch in ${ARCH_ARR[@]}; do
       transformArch $arch
-      shasum -a 256 lnd-tools-$OS_T-$ARCH_T
+      shasum -a 256 lnd-tools-$OS_T-$ARCH_T-$VERSION
     done
   done
   cd $CWD
